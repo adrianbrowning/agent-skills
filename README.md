@@ -20,7 +20,7 @@ And choose the ones you want.
 Copy the files from hooks/* to your local ~/.claude or <project root>/.claude 
 
 
-### UserPromptSumit
+### UserPromptSubmit
 ```json
 {
   "hooks": {
