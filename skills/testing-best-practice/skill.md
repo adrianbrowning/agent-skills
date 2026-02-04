@@ -157,3 +157,8 @@ expect(result.email).toBe("new@example.com");
 ```
 
 Explain that this test will only fail when the *behavioural contract* changes, not just when `apiClient` usage is refactored.
+
+## Related Skills
+
+- `/tdd-integration` - TDD Red-Green-Refactor cycle for feature development
+- `/mw-mr-mf` - Make it Work/Right/Fast workflow for iterative development

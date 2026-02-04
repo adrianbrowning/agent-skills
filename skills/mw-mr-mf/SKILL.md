@@ -355,3 +355,8 @@ This workflow may not fit when:
 - Making small fixes to existing code
 - Prototyping/exploring (stay in Phase 1)
 - The "right" solution is obvious from the start
+
+## Related Skills
+
+- `/tdd-integration` - TDD Red-Green-Refactor cycle that complements this workflow
+- `/testing-best-practice` - Testing philosophy and patterns for quality tests

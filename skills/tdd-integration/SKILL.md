@@ -70,3 +70,9 @@ Never:
 - Proceed to Green without seeing Red fail
 - Skip Refactor evaluation
 - Start a new feature before completing the current cycle
+
+## Related Skills
+
+- `/mw-mr-mf` - Make it Work/Right/Fast workflow that pairs with TDD
+- `/testing-best-practice` - Testing philosophy for writing quality tests
+- `/plan-to-tasks` - Convert plans to JSONL format with TDD-ready task structure
