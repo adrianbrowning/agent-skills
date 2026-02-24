@@ -39,3 +39,18 @@ Copy the files from hooks/* to your local ~/.claude or <project root>/.claude
   }
 }
 ```
+
+### PreToolUse
+```JSON
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/block-dangerous-git.sh"
+          }
+        ]
+      }
+    ]
+```
