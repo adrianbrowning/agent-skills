@@ -1,5 +1,3 @@
-# adrianbrowning/agent-skills
-
 Agent skills for the tools I use.
 
 Install with:
