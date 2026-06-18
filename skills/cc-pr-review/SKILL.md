@@ -1,6 +1,6 @@
 ---
 name: cc-pr-review
-description: Multi-agent PR review (local use only). Spawns 7 parallel domain-specialist teammates including a thermo-nuclear maintainability reviewer. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
+description: Multi-agent PR review (local use only). Spawns 8 parallel domain-specialist teammates including a thermo-nuclear maintainability reviewer. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
 ---
 
 # PR Review — Multi-Agent Lead (local only)
