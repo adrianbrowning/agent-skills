@@ -1,6 +1,7 @@
 ---
 name: generate-pr
-description: Generates high-quality PR titles and descriptions by analyzing git diff and commits. Produces structured Why/What/Impact/Verification/Notes-for-reviewers body with correct title format "JIRA-1234: Short imperative verb description". Includes AI survey fields. Use when user wants to create, write, or generate a PR description, open a pull request, or asks for help writing PR content.
+description: |
+   Generates high-quality PR titles and descriptions by analyzing git diff and commits. Produces structured Why/What/Impact/Verification/Notes-for-reviewers body with correct title format "JIRA-1234: Short imperative verb description". Includes AI survey fields. Use when user wants to create, write, or generate a PR description, open a pull request, or asks for help writing PR content.
 ---
 
 # Generate PR
