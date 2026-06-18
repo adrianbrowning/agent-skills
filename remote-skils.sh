@@ -147,20 +147,7 @@ pnpm dlx skills add anivar/zod-skill \
   --skill zod \
   $APP
 
-# ─── LOCAL ONLY — not in lock, no remote source ───────────────────────────────
-# cc-pr-review
-# conversation-to-html
-# frontend-desgin
-# generate-do-work
-# generate-pr
-# graphify
-# mw-mr-mf
-# preferences
-# react
-# task-flow
-# tealium-ui-kit
-# test-validity-review
-# testing-best-practice
-# thermo-nuclear-code-quality-review
-# vercel-react-best-practices
-# zod
+# ─── DietrichGebert/ponytail ──────────────────────────────────────────────────
+pnpm dlx skills add DietrichGebert/ponytail \
+  --skill ponytail \
+  $APP
