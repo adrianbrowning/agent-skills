@@ -137,6 +137,16 @@ pnpm dlx skills add Cst2989/react-tips-skill \
   --skill react-tips \
   $APP
 
+# ─── vercel-labs/agent-skills ─────────────────────────────────────────────────
+pnpm dlx skills add vercel-labs/agent-skills \
+  --skill vercel-react-best-practices \
+  $APP
+
+# ─── anivar/zod-skill ─────────────────────────────────────────────────────────
+pnpm dlx skills add anivar/zod-skill \
+  --skill zod \
+  $APP
+
 # ─── LOCAL ONLY — not in lock, no remote source ───────────────────────────────
 # cc-pr-review
 # conversation-to-html
