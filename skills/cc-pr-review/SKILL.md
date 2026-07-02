@@ -1,11 +1,11 @@
 ---
 name: cc-pr-review
-description: Multi-agent PR review (local use only). Spawns 8 parallel domain-specialist teammates including a thermo-nuclear maintainability reviewer. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
+description: Multi-agent PR review (local use only). Spawns 9 parallel domain-specialist teammates including bug hunter, scope/contract, and thermo-nuclear maintainability reviewers. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
 ---
 
 # PR Review — Multi-Agent Lead (local only)
 
-You are the **lead**. Spawn 7 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
+You are the **lead**. Spawn 9 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
 
 *If no PR number provided, diff against `origin/main` instead.*
 
@@ -47,9 +47,11 @@ TaskCreate { subject: "testing review",     description: "pending" }
 TaskCreate { subject: "devops review",      description: "pending" }
 TaskCreate { subject: "holistic review",    description: "pending" }
 TaskCreate { subject: "thermo review",      description: "pending" }
+TaskCreate { subject: "bug review",         description: "pending" }
+TaskCreate { subject: "scope review",       description: "pending" }
 ```
 
-Note the 8 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
+Note the 10 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
 
 ## Step 2.5 — Build skills index (lead does this directly, BEFORE spawning reviewers)
 
@@ -75,9 +77,11 @@ Do this yourself — no subagent needed.
 
 Do NOT spawn reviewers until this TaskUpdate is complete.
 
-## Step 3 — Spawn 6 teammates in parallel (model: sonnet)
+## Step 3 — Spawn 9 teammates in parallel (model: sonnet)
 
 Spawn all 6 simultaneously. Replace `{DIFF_COMMAND}`, `{TASK_ID}`, and `{SKILL_TASK_ID}` with actual values.
+
+**IMPORTANT:** Always spawn reviewer agents with `mode: "bypassPermissions"` so they never block on file-read permission dialogs.
 
 **Preamble for all reviewers** — each spawn prompt starts with this skills-loading step:
 ```
@@ -189,6 +193,36 @@ Your task ID: {THERMO_TASK_ID}
 When done: TaskUpdate { taskId: "{THERMO_TASK_ID}", status: "completed", description: "DOMAIN: thermo\n[your full findings]" }
 ```
 
+**bug-reviewer** spawn prompt:
+```
+0. Load relevant skills for your domain:
+   a. TaskGet { taskId: "{SKILL_TASK_ID}" } — the description contains a skills index
+   b. Your domain is: runtime correctness / bug hunting. Load any skills relevant to correctness, error handling, null safety, race conditions.
+   c. Read the full SKILL.md for each relevant skill and apply its guidance.
+1. Read .claude/skills/cc-pr-review/references/bug.md — it contains your full instructions and what to look for.
+2. Read {DATA_FILE} — contains PR metadata, full diff, and changed file list.
+3. For non-trivial logic changes, read the full source file to understand context beyond the diff.
+4. Simulate runtime failure: trace each changed code path for null propagation, error swallowing, race conditions, missing transactions, and edge cases.
+5. Reference specific file paths and line numbers from the diff in your findings.
+Your task ID: {BUG_TASK_ID}
+When done: TaskUpdate { taskId: "{BUG_TASK_ID}", status: "completed", description: "DOMAIN: bug\n[your full findings]" }
+```
+
+**scope-reviewer** spawn prompt:
+```
+0. Load relevant skills for your domain:
+   a. TaskGet { taskId: "{SKILL_TASK_ID}" } — the description contains a skills index
+   b. Your domain is: scope discipline / PR hygiene / contract drift. Load any skills relevant to scope management, API contracts, naming conventions.
+   c. Read the full SKILL.md for each relevant skill and apply its guidance.
+1. Read .claude/skills/cc-pr-review/references/scope.md — it contains your full instructions and checklist.
+2. Read {DATA_FILE} — contains PR metadata, full diff, and changed file list.
+3. Categorize every changed file as fix-relevant or tangential.
+4. Check PR hygiene from the ## PR METADATA section (title, body structure, WIP markers).
+5. Reference specific files or "PR body" in your findings.
+Your task ID: {SCOPE_TASK_ID}
+When done: TaskUpdate { taskId: "{SCOPE_TASK_ID}", status: "completed", description: "DOMAIN: scope\n[your full findings]" }
+```
+
 After spawning, assign each task to its teammate:
 ```
 TaskUpdate { taskId: "<security task id>",    owner: "sec-reviewer" }
@@ -198,13 +232,21 @@ TaskUpdate { taskId: "<testing task id>",     owner: "test-reviewer" }
 TaskUpdate { taskId: "<devops task id>",      owner: "devops-reviewer" }
 TaskUpdate { taskId: "<holistic task id>",    owner: "holistic-reviewer" }
 TaskUpdate { taskId: "<thermo task id>",      owner: "thermo-reviewer" }
+TaskUpdate { taskId: "<bug task id>",         owner: "bug-reviewer" }
+TaskUpdate { taskId: "<scope task id>",       owner: "scope-reviewer" }
 ```
 
 ## Step 4 — Poll for completion
 
-Call `TaskList` repeatedly until all 7 reviewer tasks show `status: "completed"`. Do NOT proceed until all 7 are done. Each `TaskList` call is one turn — keep polling.
+Call `TaskList` repeatedly until all 9 reviewer tasks show `status: "completed"` or the timeout is reached.
 
-Once all 7 complete, retrieve findings:
+**Timeout and stall handling:**
+- After each `TaskList` call, count how many tasks have changed status since the previous poll.
+- If **no tasks changed status for 3 consecutive polls**, consider those tasks stalled.
+- Mark stalled tasks as timed out (note which ones). Proceed with whatever completed — do NOT wait forever.
+- Maximum polls: **20** (roughly 10–15 minutes at normal cadence). If still incomplete after 20 polls, proceed with available results and note missing domains in the synthesis.
+
+Once all 9 complete (or timeout), retrieve findings:
 ```
 TaskGet { taskId: "<security task id>" }
 TaskGet { taskId: "<performance task id>" }
@@ -213,9 +255,11 @@ TaskGet { taskId: "<testing task id>" }
 TaskGet { taskId: "<devops task id>" }
 TaskGet { taskId: "<holistic task id>" }
 TaskGet { taskId: "<thermo task id>" }
+TaskGet { taskId: "<bug task id>" }
+TaskGet { taskId: "<scope task id>" }
 ```
 
-The `description` field of each completed task contains the domain findings.
+The `description` field of each completed task contains the domain findings. Skip TaskGet for any timed-out tasks and note them as "TIMED OUT — domain not reviewed" in Step 6.
 
 ## Step 5 — Validate findings (no-context agent)
 
