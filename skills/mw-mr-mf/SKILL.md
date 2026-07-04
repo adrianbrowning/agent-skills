@@ -1,5 +1,5 @@
 ---
-name: jherr-dev-workflow
+name: mw-mr-mf
 description: Iterative development workflow based on "Make it work, Make it right, Make it fast" philosophy. Use when building software features, components, or systems from scratch. Guides Claude through three distinct phases - getting a working solution first, then refactoring for quality, and finally optimizing performance only when needed. Prevents premature optimization and over-engineering. Integrates seamlessly with TDD (Test-Driven Development) by mapping test phases to development phases.
 ---
 

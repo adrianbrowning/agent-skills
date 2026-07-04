@@ -1,6 +1,7 @@
 ---
 name: testing-best-practice
-description: A Skill for writing, reviewing, and refactoring tests using Artem-style principles: test intent over implementation, mock boundaries not internals, avoid flakiness, prefer integration tests, and use `using` for cleanup.
+description: |
+        A Skill for writing, reviewing, and refactoring tests using Artem-style principles: test intent over implementation, mock boundaries not internals, avoid flakiness, prefer integration tests, and use `using` for cleanup.
 ---
 
 # Testing Best Practice
