@@ -77,7 +77,6 @@ DOMAIN: bug
 CRITICAL: <count>
 HIGH: <count>
 OBSERVATIONS: <count>
-POSITIVES: <count>
 
 ### Critical Issues
 [For each: file:line | title | failure scenario | conditions that trigger it | fix]
@@ -91,7 +90,4 @@ POSITIVES: <count>
 [For each: file:line | title | edge case or concern]
 [If none: "None"]
 
-### Positives
-- [What's done well — good null guards, correct error handling, clean edge case coverage]
-[If none: "None"]
 ```

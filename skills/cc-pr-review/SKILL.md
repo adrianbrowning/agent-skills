@@ -309,11 +309,10 @@ Use the `description` of this task (not the raw domain findings) as input to Ste
 
 1. Read `references/format.md` for the exact comment template.
 2. Merge validated findings:
-   - Sum counts: total Critical / High / Observations / Positives
+   - Sum counts: total Critical / High / Observations
    - Combine all Critical issues across domains
    - Combine all High issues
    - Combine all Observations
-   - Deduplicate and merge Positives
 3. Determine verdict:
    - Any Critical → ❌ Changes Required
    - High only → ⚠️ Approved with Suggestions

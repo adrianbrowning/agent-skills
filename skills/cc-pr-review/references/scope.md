@@ -69,7 +69,6 @@ DOMAIN: scope
 CRITICAL: <count>
 HIGH: <count>
 OBSERVATIONS: <count>
-POSITIVES: <count>
 
 ### Critical Issues
 [For each: files affected | title | problem | fix]
@@ -83,7 +82,4 @@ POSITIVES: <count>
 [For each: files affected or "PR body" | title | suggestion]
 [If none: "None"]
 
-### Positives
-- [What's done well — clean scope, good PR description, consistent naming]
-[If none: "None"]
 ```

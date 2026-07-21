@@ -11,7 +11,6 @@ Post as a **single `gh pr comment`**. Use this exact structure.
 - 🔴 **Critical** = Blocking issues, must fix before merge
 - 🟡 **High Priority** = Should fix, impacts quality/security
 - 💡 **Observations** = Nice to have, consider for future
-- ✅ **Positives** = What's working well
 
 Click any section to expand/collapse details.
 
@@ -34,7 +33,6 @@ Click any section to expand/collapse details.
 | Critical (blocking) | X |
 | High priority | X |
 | Observations | X |
-| Positive highlights | X |
 
 </details>
 
@@ -160,19 +158,6 @@ Expected outcome: [What the fixed code should do]
 
 ---
 
-## ✅ Positive Observations
-
-<details>
-<summary>What's working well - click to expand</summary>
-
-1. ✅ [Positive point 1]
-2. ✅ [Positive point 2]
-3. ✅ [Positive point 3]
-
-</details>
-
----
-
 ## 📝 Required Actions
 
 **Blocking (must fix):**
@@ -209,7 +194,6 @@ Expected outcome: [What the fixed code should do]
 - Keep code examples short or collapsed
 - Use emoji severity indicators consistently
 - Group issues by severity across all domains
-- Always include positive observations
 - End with clear verdict
 - If you use `#<number>` in the review, make it a link. E.g. heading `### 4. Foo Bar` → link `[#4](#4-foo-bar)`
 - DO NOT use a claude.ai link. Use summary/details format with a prompt instead
