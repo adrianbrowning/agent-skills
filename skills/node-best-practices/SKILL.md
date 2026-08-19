@@ -44,6 +44,5 @@ When reviewing rather than changing code, report only findings that are actionab
 
 - [`reference/README.md`](reference/README.md) is the index and concise rationale for the complete catalog.
 - [`reference/sections/`](reference/sections/) contains the linked deep dives, examples, and supporting assets. Load an individual document through its README link instead of scanning the entire directory.
-- [`reference/assets/`](reference/assets/) supplies README illustrations and examples; it is reference material, not an independent policy source.
 - The translated READMEs were omitted to keep this package focused. Use the English README for canonical paths.
 - [`ATTRIBUTION.md`](ATTRIBUTION.md) and [`reference/LICENSE`](reference/LICENSE) state the source and reuse terms.
