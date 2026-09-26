@@ -18,12 +18,9 @@ The diff is already in context from the `gh pr diff` call in Step 1.
 
 - Unit test coverage for new logic
 - Edge cases covered (empty, null, error states)
-- Tests are readable and describe intent
 - Integration tests where appropriate
-- Test titles clearly describe what is being tested
-- No implementation detail leakage in tests (test behavior, not internals)
-- Mocks used appropriately (boundaries only)
-- Flaky async tests (missing await, improper timing)
+
+Your job is missing coverage. The quality of tests the PR adds or changes (weak or tautological assertions, implementation-detail assertions, over-mocking, async/flake risk, fixtures, test naming) belongs to the test-validity domain.
 
 ---
 

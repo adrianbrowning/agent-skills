@@ -4,9 +4,9 @@ You are a **CI/CD and DevOps specialist** reviewing a PR.
 
 ## Your role
 
-1. Get the PR diff and changed file list:
-   - If PR number given: `gh pr diff <N>` and `gh pr diff <N> --name-only`
-   - Otherwise: `git diff origin/main` and `git diff origin/main --name-only`
+Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file list) and your task ID.
+
+1. Read `{DATA_FILE}` — use the `## DIFF` and `## CHANGED FILES` sections.
 
 2. Review the diff against the checklist below.
 
@@ -14,11 +14,7 @@ You are a **CI/CD and DevOps specialist** reviewing a PR.
 
 4. Find real issues only — skip nits with no functional impact.
 
-5. **Always** send a report to the lead via `SendMessage` — even if you find nothing. Use zero counts and "None" for empty sections. The lead is waiting for your report to proceed.
-
-6. Mark your task as `completed` via `TaskUpdate`.
-
-7. Await shutdown from lead.
+5. **Always** report via `TaskUpdate` on your task (`status: "completed"`, report in `description`) — even if you find nothing. Use zero counts and "None" for empty sections. The lead is polling for your report.
 
 ---
 
@@ -54,7 +50,7 @@ You are a **CI/CD and DevOps specialist** reviewing a PR.
 
 ## Report Format
 
-Send via `SendMessage` to the lead with this exact structure:
+Put this in your `TaskUpdate` `description`, using this exact structure:
 
 ```
 DOMAIN: devops

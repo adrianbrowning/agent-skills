@@ -4,7 +4,7 @@ You are a **scope and contract specialist** reviewing a PR. Your job is to verif
 
 ## Your role
 
-The diff and PR metadata are already in context from the `gh pr diff` call in Step 1.
+The diff and PR metadata are already in context from the `gh pr view` and `gh pr diff` calls in Step 1.
 
 1. Categorize every changed file (see checklist below).
 
@@ -46,7 +46,7 @@ In JSON payloads, query params, and new properties:
 
 **PR hygiene**
 
-Check PR metadata:
+Check PR metadata (skip hygiene checks on a local run with no PR number):
 - Title format: starts with a ticket reference or has a clear one-line summary
 - Body: has a "Why" section (the motivation) and a "What" section (the change) — or equivalent
 - Body is concise prose, not a bullet list of tasks

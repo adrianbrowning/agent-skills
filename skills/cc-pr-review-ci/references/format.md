@@ -18,7 +18,7 @@ The agent outputs a `review.json` file. The posting script reads it and creates 
   "findings": [
     {
       "id": "security-no-rate-limiting",
-      "domain": "security" | "performance" | "react-ts" | "testing" | "devops" | "holistic" | "duplication" | "bug" | "scope" | "thermo",
+      "domain": "security" | "performance" | "react-ts" | "testing" | "test-validity" | "devops" | "holistic" | "duplication" | "bug" | "scope" | "thermo",
       "severity": "critical" | "high" | "observation",
       "path": "src/api/handler.ts",
       "line": 42,

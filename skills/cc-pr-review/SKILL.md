@@ -1,11 +1,11 @@
 ---
 name: cc-pr-review
-description: Multi-agent PR review (local use only). Spawns 9 parallel domain-specialist teammates including bug hunter, scope/contract, and thermo-nuclear maintainability reviewers. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
+description: Multi-agent PR review (local use only). Spawns 10 parallel domain-specialist teammates including bug hunter, scope/contract, test-validity, and thermo-nuclear maintainability reviewers. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
 ---
 
 # PR Review — Multi-Agent Lead (local only)
 
-You are the **lead**. Spawn 9 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
+You are the **lead**. Spawn 10 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
 
 *If no PR number provided, diff against `origin/main` instead.*
 
@@ -44,6 +44,7 @@ TaskCreate { subject: "security review",    description: "pending" }
 TaskCreate { subject: "performance review", description: "pending" }
 TaskCreate { subject: "react-ts review",    description: "pending" }
 TaskCreate { subject: "testing review",     description: "pending" }
+TaskCreate { subject: "test-validity review", description: "pending" }
 TaskCreate { subject: "devops review",      description: "pending" }
 TaskCreate { subject: "holistic review",    description: "pending" }
 TaskCreate { subject: "thermo review",      description: "pending" }
@@ -51,7 +52,7 @@ TaskCreate { subject: "bug review",         description: "pending" }
 TaskCreate { subject: "scope review",       description: "pending" }
 ```
 
-Note the 10 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
+Note the 11 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
 
 ## Step 2.5 — Build skills index (lead does this directly, BEFORE spawning reviewers)
 
@@ -77,9 +78,9 @@ Do this yourself — no subagent needed.
 
 Do NOT spawn reviewers until this TaskUpdate is complete.
 
-## Step 3 — Spawn 9 teammates in parallel (model: sonnet)
+## Step 3 — Spawn 10 teammates in parallel (model: sonnet)
 
-Spawn all 6 simultaneously. Replace `{DIFF_COMMAND}`, `{TASK_ID}`, and `{SKILL_TASK_ID}` with actual values.
+Spawn all 10 simultaneously. Replace `{DATA_FILE}`, each `{*_TASK_ID}`, and `{SKILL_TASK_ID}` with actual values.
 
 **IMPORTANT:** Always spawn reviewer agents with `mode: "bypassPermissions"` so they never block on file-read permission dialogs.
 
@@ -145,6 +146,21 @@ When done: TaskUpdate { taskId: "{TS_TASK_ID}", status: "completed", description
 4. Reference specific file paths and line numbers from the diff in your findings.
 Your task ID: {TEST_TASK_ID}
 When done: TaskUpdate { taskId: "{TEST_TASK_ID}", status: "completed", description: "DOMAIN: testing\n[your full findings]" }
+```
+
+**tvr-reviewer** spawn prompt:
+```
+0. Load relevant skills for your domain:
+   a. TaskGet { taskId: "{SKILL_TASK_ID}" } — the description contains a skills index
+   b. Your domain is: test validity. Find `test-validity-review` in the index and note its path. Also load any skills relevant to test design, mocking, assertions, async testing.
+   c. Read the full SKILL.md for each relevant skill and apply its guidance.
+1. Read .claude/skills/cc-pr-review/references/test-validity.md — it contains your full instructions.
+2. Read {DATA_FILE} — contains PR metadata, full diff, and changed file list.
+3. Identify every test, fixture, mock, and test-setup file in ## CHANGED FILES. If there are none, report zero counts.
+4. For each, read the full test file and the source it exercises, then run the mutation challenge from test-validity-review.
+5. Reference specific file paths, test names, and line numbers from the diff in your findings.
+Your task ID: {TVR_TASK_ID}
+When done: TaskUpdate { taskId: "{TVR_TASK_ID}", status: "completed", description: "DOMAIN: test-validity\n[your full findings]" }
 ```
 
 **devops-reviewer** spawn prompt:
@@ -229,6 +245,7 @@ TaskUpdate { taskId: "<security task id>",    owner: "sec-reviewer" }
 TaskUpdate { taskId: "<performance task id>", owner: "perf-reviewer" }
 TaskUpdate { taskId: "<react-ts task id>",    owner: "ts-reviewer" }
 TaskUpdate { taskId: "<testing task id>",     owner: "test-reviewer" }
+TaskUpdate { taskId: "<test-validity task id>", owner: "tvr-reviewer" }
 TaskUpdate { taskId: "<devops task id>",      owner: "devops-reviewer" }
 TaskUpdate { taskId: "<holistic task id>",    owner: "holistic-reviewer" }
 TaskUpdate { taskId: "<thermo task id>",      owner: "thermo-reviewer" }
@@ -238,7 +255,7 @@ TaskUpdate { taskId: "<scope task id>",       owner: "scope-reviewer" }
 
 ## Step 4 — Poll for completion
 
-Call `TaskList` repeatedly until all 9 reviewer tasks show `status: "completed"` or the timeout is reached.
+Call `TaskList` repeatedly until all 10 reviewer tasks show `status: "completed"` or the timeout is reached.
 
 **Timeout and stall handling:**
 - After each `TaskList` call, count how many tasks have changed status since the previous poll.
@@ -246,12 +263,13 @@ Call `TaskList` repeatedly until all 9 reviewer tasks show `status: "completed"`
 - Mark stalled tasks as timed out (note which ones). Proceed with whatever completed — do NOT wait forever.
 - Maximum polls: **20** (roughly 10–15 minutes at normal cadence). If still incomplete after 20 polls, proceed with available results and note missing domains in the synthesis.
 
-Once all 9 complete (or timeout), retrieve findings:
+Once all 10 complete (or timeout), retrieve findings:
 ```
 TaskGet { taskId: "<security task id>" }
 TaskGet { taskId: "<performance task id>" }
 TaskGet { taskId: "<react-ts task id>" }
 TaskGet { taskId: "<testing task id>" }
+TaskGet { taskId: "<test-validity task id>" }
 TaskGet { taskId: "<devops task id>" }
 TaskGet { taskId: "<holistic task id>" }
 TaskGet { taskId: "<thermo task id>" }
@@ -271,7 +289,7 @@ TaskCreate { subject: "validation", description: "pending" }
 
 Note the returned ID as `{VALIDATE_TASK_ID}`.
 
-**validator** spawn prompt (replace `{DATA_FILE}`, `{VALIDATE_TASK_ID}`, and paste all 6 domain findings inline as `{ALL_FINDINGS}`):
+**validator** spawn prompt (replace `{DATA_FILE}`, `{VALIDATE_TASK_ID}`, and paste every completed domain's findings inline as `{ALL_FINDINGS}`):
 ```
 You are a validation agent. You have no prior knowledge of this PR review.
 
