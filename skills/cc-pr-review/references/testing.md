@@ -24,7 +24,7 @@ Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file 
 - Edge cases covered (empty, null, error states)
 - Integration tests where appropriate
 
-**From `testing-best-practice`** (rules 5 and 6):
+**From `testing-best-practice`** — apply rules 5 and 6 only. Rules 1–4, 7 and 8 cover the quality of individual tests and belong to the test-validity reviewer; do not report them here.
 - New behaviour that spans several layers has an integration test, not only mocked unit tests
 - Changed production code that is hard to test (globals, hidden side-effects, no injection point): suggest the refactor the skill describes — extract pure functions, inject dependencies, isolate side-effects
 
