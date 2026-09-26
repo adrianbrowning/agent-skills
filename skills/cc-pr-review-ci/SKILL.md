@@ -49,12 +49,15 @@ Extract the finding `id` from the prior comment body — each inline comment pos
 ```bash
 HEAD_SHA=$(gh pr view $PR_NUMBER --json headRefOid --jq .headRefOid)
 gh api repos/{owner}/{repo}/compare/$COMMIT_ID...$HEAD_SHA \
-  --jq '[.files[] | {filename: .filename, patch: .patch}]'
+  --jq '[.files[] | {filename: .filename, previous_filename: .previous_filename, patch: .patch}]'
 ```
 
-Run this once per distinct `commit_id`. Remove an entry from `SUPPRESSED_FINDINGS` when:
-- its `path` appears in the compare output and a hunk's old-side range (`@@ -start,count ...`) falls within 5 lines of its `line`, or it has no `line`; **or**
-- the compare call fails (for example, the commit was force-pushed away).
+Run this once per distinct `commit_id`. Remove an entry from `SUPPRESSED_FINDINGS` when its `path` matches a file's `filename` or `previous_filename` and any of these hold:
+- A hunk overlaps the finding. For each hunk header `@@ -start,count +...`, the old-side interval is `start` to `start + max(count, 1) - 1` (`count` is 1 when omitted). It overlaps if that interval intersects `line - 5` to `line + 5`. Check the whole interval, not just `start`: a hunk that begins well before the finding can still span it.
+- The entry has no `line` (file-level finding).
+- The file has no `patch` (binary or too large to diff).
+
+Also remove every entry for a `commit_id` whose compare call fails (for example, the commit was force-pushed away).
 
 If no prior reviews or no dismissals: `SUPPRESSED_FINDINGS` is empty.
 
