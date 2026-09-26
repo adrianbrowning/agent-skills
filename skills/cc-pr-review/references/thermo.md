@@ -9,6 +9,16 @@ Delete accidental complexity. Preserve domain boundaries, correctness, auditabil
 
 Review as if responsible for next six months of changes. Best finding: "this whole path disappears if we model state directly."
 
+## Your role
+
+Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file list) and your task ID.
+
+1. Read `{DATA_FILE}`.
+2. Apply all 8 lenses below line by line across the diff.
+3. For non-trivial logic, read the full source file to understand context beyond the diff.
+4. Ask the core questions for every changed file.
+5. **Always** report via `TaskUpdate` on your task (`status: "completed"`, report in `description`) — even if you find nothing. Use zero counts and "None" for empty sections. The lead is polling for your report.
+
 ## Core questions (ask every time)
 
 * Can this be deleted?
@@ -121,6 +131,14 @@ Prefer parallel independent work, atomic related updates, transaction/compensati
 
 ---
 
+## Severity mapping
+
+| Thermo severity | cc-pr-review label |
+|-----------------|-------------------|
+| Blocker         | Critical           |
+| High            | High               |
+| Medium / Low    | Observation        |
+
 ## Presumptive blockers (Critical)
 
 Block unless clearly justified:
@@ -150,22 +168,28 @@ Serious unless clearly justified:
 * optional/fallback-heavy state model
 * no contract test around volatile external boundary
 
-## Severity mapping (use cc-pr-review format)
+---
 
-| Thermo severity | cc-pr-review label |
-|-----------------|-------------------|
-| Blocker         | Critical           |
-| High            | High               |
-| Medium / Low    | Observation        |
+## Report Format
 
-## Approval bar
+Put this in your `TaskUpdate` `description`, using this exact structure:
 
-Approve only when:
-* code got simpler or stayed simple
-* complexity deleted, not moved
-* vertical slice clear
-* boundaries clean
-* tests protect behaviour at useful seams
-* file shape maintainable
-* future behaviour has obvious place to go
-* essential complexity explicit and justified
+```
+DOMAIN: thermo
+CRITICAL: <count>
+HIGH: <count>
+OBSERVATIONS: <count>
+
+### Critical Issues
+[For each: file:line | title | what's wrong | how to simplify]
+[If none: "None"]
+
+### High Priority Issues
+[For each: file:line | title | what's wrong | how to simplify]
+[If none: "None"]
+
+### Observations
+[For each: file:line | title | suggestion]
+[If none: "None"]
+
+```

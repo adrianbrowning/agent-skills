@@ -11,46 +11,46 @@ description: |
 When the user asks for help with tests (writing new tests, improving existing ones, or defining testing standards), follow these rules:
 
 1. **Test intent, not implementation**
-    - Make tests read like requirements.
-    - Assert observable behaviour: return values, DOM, side-effects, and public contracts.
-    - Avoid asserting private state, internal variables, or exact call sequences unless the behaviour *requires* it.
+   - Make tests read like requirements.
+   - Assert observable behaviour: return values, DOM, side-effects, and public contracts.
+   - Avoid asserting private state, internal variables, or exact call sequences unless the behaviour *requires* it.
 
 2. **Favour high-signal, low-maintenance tests**
-    - A test should fail only when the *behavioural contract* changes.
-    - Use the smallest, clearest input that still demonstrates the behaviour.
-    - Name tests in real-world language, e.g.:
-      ```ts
-      it("allows a customer to update their email", async () => {})
-      ```
+   - A test should fail only when the *behavioural contract* changes.
+   - Use the smallest, clearest input that still demonstrates the behaviour.
+   - Name tests in real-world language, e.g.:
+     ```ts
+     it("allows a customer to update their email", async () => {})
+     ```
 
 3. **Avoid flakiness with strict control of nondeterminism**
-    - Control time (fake timers), randomness, and external systems.
-    - Do not hit real network, databases, or filesystem in unit/integration tests.
-    - Explicitly await all async behaviour (no untracked promises).
+   - Control time (fake timers), randomness, and external systems.
+   - Do not hit real network, databases, or filesystem in unit/integration tests.
+   - Explicitly await all async behaviour (no untracked promises).
 
 4. **Mock boundaries, not internals**
-    - Mock HTTP via tools like Mock Service Worker (MSW) or equivalent.
-    - Do not mock your own internal functions when you can mock the external boundary instead.
-    - When mocking, model both success and failure modes (errors, invalid data, timeouts).
+   - Mock HTTP via tools like Mock Service Worker (MSW) or equivalent.
+   - Do not mock your own internal functions when you can mock the external boundary instead.
+   - When mocking, model both success and failure modes (errors, invalid data, timeouts).
 
 5. **Prefer integration tests where possible**
-    - Use unit tests for pure functions and complex branching.
-    - Use integration tests for behaviour spanning multiple layers.
-    - Keep end-to-end tests few and focused on critical user flows.
+   - Use unit tests for pure functions and complex branching.
+   - Use integration tests for behaviour spanning multiple layers.
+   - Keep end-to-end tests few and focused on critical user flows.
 
 6. **Refactor for testability**
-    - If a test is hard to write, consider changing the production code:
-        - Extract pure functions.
-        - Inject dependencies instead of using globals.
-        - Isolate side-effects behind small, well-defined boundaries.
+   - If a test is hard to write, consider changing the production code:
+     - Extract pure functions.
+     - Inject dependencies instead of using globals.
+     - Isolate side-effects behind small, well-defined boundaries.
 
 7. **Use the `using` keyword for resource cleanup**
-    - Use `using` for disposable resources such as:
-        - Temporary files/directories
-        - DB connections or transactions
-        - Event listeners
-        - Fake timers or custom resources exposing `Symbol.dispose`
-    - Prefer `using` over manual `afterEach` cleanup when possible.
+   - Use `using` for disposable resources such as:
+     - Temporary files/directories
+     - DB connections or transactions
+     - Event listeners
+     - Fake timers or custom resources exposing `Symbol.dispose`
+   - Prefer `using` over manual `afterEach` cleanup when possible.
 
    Example:
    ```ts
@@ -63,31 +63,31 @@ When the user asks for help with tests (writing new tests, improving existing on
    ```
 
 8. **Recommended test layout**
-    - When generating or refactoring tests, aim for this structure:
-      ```ts
-      describe("FeatureName", () => {
-        it("states the requirement", async () => {
-          // Arrange
-          const user = buildUser();
- 
-          // Act
-          const result = await updateEmail(user.id, "new@x.com");
- 
-          // Assert
-          expect(result.email).toBe("new@x.com");
-        });
-      });
-      ```
+   - When generating or refactoring tests, aim for this structure:
+     ```ts
+     describe("FeatureName", () => {
+       it("states the requirement", async () => {
+         // Arrange
+         const user = buildUser();
+
+         // Act
+         const result = await updateEmail(user.id, "new@x.com");
+
+         // Assert
+         expect(result.email).toBe("new@x.com");
+       });
+     });
+     ```
 
 9. **Golden rules summary**
-    - Test the **intention**, not the implementation.
-    - Mock **boundaries**, not internal helpers.
-    - Keep tests **deterministic** and repeatable.
-    - Prefer **integration tests** for real behaviour.
-    - Refactor code that is hard to test.
-    - Use **MSW or equivalent** for HTTP boundaries.
-    - Use **`using`** for automatic cleanup of disposable resources.
-    - Keep inputs minimal and test names descriptive.
+   - Test the **intention**, not the implementation.
+   - Mock **boundaries**, not internal helpers.
+   - Keep tests **deterministic** and repeatable.
+   - Prefer **integration tests** for real behaviour.
+   - Refactor code that is hard to test.
+   - Use **MSW or equivalent** for HTTP boundaries.
+   - Use **`using`** for automatic cleanup of disposable resources.
+   - Keep inputs minimal and test names descriptive.
 
 When responding, ensure that any example tests you write or refactor obey these rules by default. If the user’s existing tests violate these rules, explain what to change and why.
 
@@ -102,9 +102,9 @@ When responding, ensure that any example tests you write or refactor obey these 
 **What to do**
 
 - Propose integration-style tests that:
-    - Call `updateEmail` as the user would.
-    - Mock HTTP via MSW or a boundary-level mock.
-    - Assert on the returned result and/or observable side-effects.
+  - Call `updateEmail` as the user would.
+  - Mock HTTP via MSW or a boundary-level mock.
+  - Assert on the returned result and/or observable side-effects.
 - Avoid spying on internal helpers like `apiClient.get`.
 
 **Example response snippet**
@@ -158,3 +158,8 @@ expect(result.email).toBe("new@example.com");
 ```
 
 Explain that this test will only fail when the *behavioural contract* changes, not just when `apiClient` usage is refactored.
+
+## Related Skills
+
+- `/tdd-integration` - TDD Red-Green-Refactor cycle for feature development
+- `/mw-mr-mf` - Make it Work/Right/Fast workflow for iterative development
