@@ -24,11 +24,13 @@ Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file 
 - Edge cases covered (empty, null, error states)
 - Integration tests where appropriate
 
-**From `testing-best-practice`** — apply rules 5 and 6 only. Rules 1–4, 7 and 8 cover the quality of individual tests and belong to the test-validity reviewer; do not report them here.
-- New behaviour that spans several layers has an integration test, not only mocked unit tests
-- Changed production code that is hard to test (globals, hidden side-effects, no injection point): suggest the refactor the skill describes — extract pure functions, inject dependencies, isolate side-effects
+**From `testing-best-practice`** — apply rules 5–8. Rules 1–4 (intent, signal, determinism, mock boundaries) are already covered by the test-validity reviewer through `test-validity-review`; do not report them here.
+- Rule 5: new behaviour that spans several layers has an integration test, not only mocked unit tests
+- Rule 6: changed production code that is hard to test (globals, hidden side-effects, no injection point): suggest the refactor the skill describes — extract pure functions, inject dependencies, isolate side-effects
+- Rule 7: changed tests use `using` for disposable resources (temp files, DB connections, listeners, fake timers) instead of manual `afterEach` cleanup where possible — Observation
+- Rule 8: changed tests follow the Arrange / Act / Assert layout — Observation
 
-Your job is missing coverage. The quality of tests the PR adds or changes (weak or tautological assertions, implementation-detail assertions, over-mocking, async/flake risk, fixtures, test naming) belongs to the test-validity reviewer.
+Apart from rules 7 and 8, your job is missing coverage. The quality of tests the PR adds or changes (weak or tautological assertions, implementation-detail assertions, over-mocking, async/flake risk, fixtures, test naming) belongs to the test-validity reviewer.
 
 ---
 
