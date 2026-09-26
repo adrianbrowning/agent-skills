@@ -152,7 +152,7 @@ When done: TaskUpdate { taskId: "{TEST_TASK_ID}", status: "completed", descripti
 ```
 0. Load relevant skills for your domain:
    a. TaskGet { taskId: "{SKILL_TASK_ID}" } — the description contains a skills index
-   b. Your domain is: test validity. Find `test-validity-review` and `testing-best-practice` in the index and note their paths. Also load any skills relevant to test design, mocking, assertions, async testing.
+   b. Your domain is: test validity. Find `test-validity-review` in the index and note its path. Also load any skills relevant to test design, mocking, assertions, async testing.
    c. Read the full SKILL.md for each relevant skill and apply its guidance.
 1. Read .claude/skills/cc-pr-review/references/test-validity.md — it contains your full instructions.
 2. Read {DATA_FILE} — contains PR metadata, full diff, and changed file list.
