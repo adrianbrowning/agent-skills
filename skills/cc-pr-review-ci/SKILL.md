@@ -5,7 +5,7 @@ description: Comprehensive TypeScript/React PR review. Outputs structured review
 
 # PR Review (single-agent, CI-safe)
 
-Review a PR across 11 domains sequentially, then write `review.json`. A separate posting script turns the JSON into GitHub inline review comments.
+Review a PR across 12 domains sequentially, then write `review.json`. A separate posting script turns the JSON into GitHub inline review comments.
 
 *If no PR number provided, diff against `origin/main` and print JSON to stdout.*
 
@@ -70,7 +70,7 @@ If no prior reviews or no dismissals: `SUPPRESSED_FINDINGS` is empty.
 
 ---
 
-## Step 2 — Run 11 domain reviews sequentially
+## Step 2 — Run 12 domain reviews sequentially
 
 Read the reference file for each domain, then analyze the diff. Record findings with their exact file path and line number.
 
@@ -87,6 +87,7 @@ Read the reference file for each domain, then analyze the diff. Record findings 
 9. **Bug Hunting**      — `Read .claude/skills/cc-pr-review-ci/references/bug.md`
 10. **Scope/Hygiene**   — `Read .claude/skills/cc-pr-review-ci/references/scope.md`
 11. **Maintainability** — `Read .claude/skills/cc-pr-review-ci/references/thermo.md`
+12. **Comments**        — `Read .claude/skills/cc-pr-review-ci/references/comments.md`
 
 ---
 

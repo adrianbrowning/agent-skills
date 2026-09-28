@@ -34,7 +34,7 @@ Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file 
 - Assertions that are always true: `expect(true).toBe(true)`, comparing a value with itself, `toBeDefined()` / `toBeTruthy()` on a value that is always defined
 - Asserting a mock's own output: the test sets `mockReturnValue(x)` / `mockResolvedValue(x)` and then expects `x` with no production logic in between
 - Expected values computed with the same logic as the code under test (the test reimplements the implementation)
-- Tests with no assertions, or async tests whose assertions may never run (un-awaited promise, callback never invoked, no `expect.assertions(n)`)
+- Tests whose assertions never run: no assertions at all; an assertion inside a promise chain or callback that is neither awaited nor returned, so the test finishes green first; a `done`-style callback test with no guard that the assertion path ran. A properly awaited async test does not need `expect.assertions(n)`; do not flag its absence on its own.
 - Tests that would still pass if the production code under test were deleted or replaced with a constant
 
 Severity: **High** by default. **Critical** when the tautological test is the only test covering behaviour this PR changes, because that behaviour is then effectively untested.

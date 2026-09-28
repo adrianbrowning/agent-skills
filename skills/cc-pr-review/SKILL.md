@@ -1,11 +1,11 @@
 ---
 name: cc-pr-review
-description: Multi-agent PR review (local use only). Spawns 10 parallel domain-specialist teammates including bug hunter, scope/contract, test-validity, and thermo-nuclear maintainability reviewers. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
+description: Multi-agent PR review (local use only). Spawns 11 parallel domain-specialist teammates including bug hunter, scope/contract, test-validity, comment-cleanup, and thermo-nuclear maintainability reviewers. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Use cc-pr-review-ci for CI.
 ---
 
 # PR Review — Multi-Agent Lead (local only)
 
-You are the **lead**. Spawn 10 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
+You are the **lead**. Spawn 11 domain-specialist teammates in parallel, collect their reports via `TaskGet`, synthesize into one `gh pr comment`.
 
 *If no PR number provided, diff against `origin/main` instead.*
 
@@ -50,9 +50,10 @@ TaskCreate { subject: "holistic review",    description: "pending" }
 TaskCreate { subject: "thermo review",      description: "pending" }
 TaskCreate { subject: "bug review",         description: "pending" }
 TaskCreate { subject: "scope review",       description: "pending" }
+TaskCreate { subject: "comments review",    description: "pending" }
 ```
 
-Note the 11 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
+Note the 12 task IDs returned. The first is the skills index task — note it as `{SKILL_TASK_ID}`.
 
 ## Step 2.5 — Build skills index (lead does this directly, BEFORE spawning reviewers)
 
@@ -78,9 +79,9 @@ Do this yourself — no subagent needed.
 
 Do NOT spawn reviewers until this TaskUpdate is complete.
 
-## Step 3 — Spawn 10 teammates in parallel (model: sonnet)
+## Step 3 — Spawn 11 teammates in parallel (model: sonnet)
 
-Spawn all 10 simultaneously. Replace `{DATA_FILE}`, each `{*_TASK_ID}`, and `{SKILL_TASK_ID}` with actual values.
+Spawn all 11 simultaneously. Replace `{DATA_FILE}`, each `{*_TASK_ID}`, and `{SKILL_TASK_ID}` with actual values.
 
 **IMPORTANT:** Always spawn reviewer agents with `mode: "bypassPermissions"` so they never block on file-read permission dialogs.
 
@@ -239,6 +240,21 @@ Your task ID: {SCOPE_TASK_ID}
 When done: TaskUpdate { taskId: "{SCOPE_TASK_ID}", status: "completed", description: "DOMAIN: scope\n[your full findings]" }
 ```
 
+**comment-reviewer** spawn prompt:
+```
+0. Load relevant skills for your domain:
+   a. TaskGet { taskId: "{SKILL_TASK_ID}" } — the description contains a skills index
+   b. Your domain is: code comments. Load any skills relevant to code comments, documentation, naming, readability.
+   c. Read the full SKILL.md for each relevant skill and apply its guidance.
+1. Read .claude/skills/cc-pr-review/references/comments.md — it contains your full instructions.
+2. Read {DATA_FILE} — contains PR metadata, full diff, and changed file list.
+3. List every comment the PR adds or changes, plus existing comments next to changed code.
+4. Treat each comment as removed by default; keep it only if it passes the two-year test in comments.md.
+5. Reference specific file paths and line numbers from the diff in your findings.
+Your task ID: {COMMENTS_TASK_ID}
+When done: TaskUpdate { taskId: "{COMMENTS_TASK_ID}", status: "completed", description: "DOMAIN: comments\n[your full findings]" }
+```
+
 After spawning, assign each task to its teammate:
 ```
 TaskUpdate { taskId: "<security task id>",    owner: "sec-reviewer" }
@@ -251,11 +267,12 @@ TaskUpdate { taskId: "<holistic task id>",    owner: "holistic-reviewer" }
 TaskUpdate { taskId: "<thermo task id>",      owner: "thermo-reviewer" }
 TaskUpdate { taskId: "<bug task id>",         owner: "bug-reviewer" }
 TaskUpdate { taskId: "<scope task id>",       owner: "scope-reviewer" }
+TaskUpdate { taskId: "<comments task id>",    owner: "comment-reviewer" }
 ```
 
 ## Step 4 — Poll for completion
 
-Call `TaskList` repeatedly until all 10 reviewer tasks show `status: "completed"` or the timeout is reached.
+Call `TaskList` repeatedly until all 11 reviewer tasks show `status: "completed"` or the timeout is reached.
 
 **Timeout and stall handling:**
 - After each `TaskList` call, count how many tasks have changed status since the previous poll.
@@ -263,7 +280,7 @@ Call `TaskList` repeatedly until all 10 reviewer tasks show `status: "completed"
 - Mark stalled tasks as timed out (note which ones). Proceed with whatever completed — do NOT wait forever.
 - Maximum polls: **20** (roughly 10–15 minutes at normal cadence). If still incomplete after 20 polls, proceed with available results and note missing domains in the synthesis.
 
-Once all 10 complete (or timeout), retrieve findings:
+Once all 11 complete (or timeout), retrieve findings:
 ```
 TaskGet { taskId: "<security task id>" }
 TaskGet { taskId: "<performance task id>" }
@@ -275,6 +292,7 @@ TaskGet { taskId: "<holistic task id>" }
 TaskGet { taskId: "<thermo task id>" }
 TaskGet { taskId: "<bug task id>" }
 TaskGet { taskId: "<scope task id>" }
+TaskGet { taskId: "<comments task id>" }
 ```
 
 The `description` field of each completed task contains the domain findings. Skip TaskGet for any timed-out tasks and note them as "TIMED OUT — domain not reviewed" in Step 6.
