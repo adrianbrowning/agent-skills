@@ -27,7 +27,7 @@ The diff is already in context from Step 1.
 Use the `test-validity-review` checklist. For a PR-scoped review, prioritise:
 
 - Mutation challenge: would the test still pass if the changed source returned a constant, dropped validation, inverted a branch, or lost an `await`?
-- Vacuous or tautological assertions, existence-only checks, broad snapshots
+- Existence-only checks where the value matters, broad snapshots
 - Mocks that replace the behaviour under test, or assertions that only check mock wiring
 - Missing `await`, arbitrary sleeps, uncontrolled time, randomness, or network
 - Assertions on implementation details: private state, internal call order, DOM structure
@@ -37,6 +37,7 @@ Use the `test-validity-review` checklist. For a PR-scoped review, prioritise:
 ## DO NOT flag
 
 - Missing coverage for new logic (the testing domain handles that)
+- Tautological tests that cannot fail whatever the production code does (the testing domain handles those). You handle tests that can fail, but for the wrong reason or not for realistic bugs.
 - Bugs in production code (the bug domain handles that)
 - Style issues the linter catches
 

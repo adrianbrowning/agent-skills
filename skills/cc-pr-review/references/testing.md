@@ -30,7 +30,16 @@ Your spawn prompt gives you `{DATA_FILE}` (PR metadata, full diff, changed file 
 - Rule 7: changed tests use `using` for disposable resources (temp files, DB connections, listeners, fake timers) instead of manual `afterEach` cleanup where possible — Observation
 - Rule 8: changed tests follow the Arrange / Act / Assert layout — Observation
 
-Apart from rules 7 and 8, your job is missing coverage. The quality of tests the PR adds or changes (weak or tautological assertions, implementation-detail assertions, over-mocking, async/flake risk, fixtures, test naming) belongs to the test-validity reviewer.
+**Tautological tests** — a test that cannot fail, whatever the production code does, is false coverage. In tests the PR adds or changes, flag the following. Read the whole test file when mocks or setup sit outside the diff.
+- Assertions that are always true: `expect(true).toBe(true)`, comparing a value with itself, `toBeDefined()` / `toBeTruthy()` on a value that is always defined
+- Asserting a mock's own output: the test sets `mockReturnValue(x)` / `mockResolvedValue(x)` and then expects `x` with no production logic in between
+- Expected values computed with the same logic as the code under test (the test reimplements the implementation)
+- Tests with no assertions, or async tests whose assertions may never run (un-awaited promise, callback never invoked, no `expect.assertions(n)`)
+- Tests that would still pass if the production code under test were deleted or replaced with a constant
+
+Severity: **High** by default. **Critical** when the tautological test is the only test covering behaviour this PR changes, because that behaviour is then effectively untested.
+
+Apart from rules 7 and 8 and tautological tests, your job is missing coverage. The quality of tests the PR adds or changes (weak assertions, implementation-detail assertions, over-mocking, async/flake risk, fixtures, test naming) belongs to the test-validity reviewer.
 
 ---
 
